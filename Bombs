@@ -1,0 +1,103 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+namespace Bombs
+
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int n = int.Parse(Console.ReadLine());
+
+            List<List<int>> matrix = new List<List<int>>(n);
+
+            for (int arr = 0; arr < n; arr++)
+            {
+                matrix.Add(Console.ReadLine().Split().Select(int.Parse).ToList());
+            }
+
+            List<string> bombs = Console.ReadLine().Split().ToList();
+
+            for (int i = 0; i < bombs.Count; i++)
+            {
+                string currentBomb = bombs[i];
+                int row = currentBomb[0] - '0';
+                int col = currentBomb[2] - '0';
+                int value = matrix[row][col];
+
+                if (value <= 0)
+                {
+                    continue;
+                }
+
+                DamageToValues(matrix, row, col, value);
+
+            }
+
+            int[] aliveCellsCountAndSum = new int[2];
+
+            Console.WriteLine($"Alive cells: {AliveCellsСountAndSum(matrix, aliveCellsCountAndSum)[0]}\r\nSum: { aliveCellsCountAndSum[1]}");
+
+            matrix.ForEach(a => Console.WriteLine(string.Join(" ", a)));
+            
+
+        }
+
+        public static List<string> CheckHitBombs(List<string> bombs, List<List<int>> matrix, int row, int col)
+        {
+            if (matrix[row][col - 1].Equals(bombs.Any())) bombs.RemoveAt(bombs[row][col - 1]);
+            if (matrix[row][col + 1].Equals(bombs.Any())) bombs.RemoveAt(bombs[row][col + 1]);
+            if (matrix[row + 1][col].Equals(bombs.Any())) bombs.RemoveAt(bombs[row + 1][col]);
+            if (matrix[row - 1][col].Equals(bombs.Any())) bombs.RemoveAt(bombs[row - 1][col]);
+
+            return bombs;
+        }
+
+        public static List<List<int>> DamageToValues(List<List<int>> matrix, int row, int col, int value)
+
+        {
+
+            try { if (matrix[row][col - 1] > 0) matrix[row][col - 1] -= value; }
+            catch { }
+            try { if (matrix[row][col + 1] > 0) matrix[row][col + 1] -= value; }
+            catch { }
+            try { if (matrix[row + 1][col] > 0) matrix[row + 1][col] -= value; }
+            catch { }
+            try { if (matrix[row - 1][col] > 0) matrix[row - 1][col] -= value; }
+            catch { }
+            try { if (matrix[row + 1][col + 1] > 0) matrix[row + 1][col + 1] -= value; }
+            catch { }
+            try { if (matrix[row + 1][col - 1] > 0) matrix[row + 1][col - 1] -= value; }
+            catch { }
+            try { if (matrix[row - 1][col + 1] > 0) matrix[row - 1][col + 1] -= value; }
+            catch { }
+            try { if (matrix[row - 1][col - 1] > 0) matrix[row - 1][col - 1] -= value; }
+            catch { }
+
+            matrix[row][col] = 0;
+
+            return matrix;
+        }
+
+        public static int[] AliveCellsСountAndSum(List<List<int>> matrix, int[] aliveCellsCountAndSum)
+        {
+            
+            foreach (var array in matrix)
+            {
+                foreach (var cell in array)
+                {
+                    if (cell > 0)
+                    {
+                        aliveCellsCountAndSum[0]++;
+                        aliveCellsCountAndSum[1] += cell;
+                    }
+                }
+            }
+            return aliveCellsCountAndSum;
+        }
+
+
+    }
+}
